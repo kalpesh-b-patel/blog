@@ -4,6 +4,8 @@
   "description": "Personal Blog REST web-service",
   "main": "app.js",
   "scripts": {
+    "create-private-key": "printenv > jwtRS256.key",
+    "create-public-key": "printenv > jwtRS256.key.pub",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
