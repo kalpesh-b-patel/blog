@@ -62,3 +62,7 @@ typings/
 
 # IDE
 *.idea
+
+#Keys
+*.key
+*.key.pub
