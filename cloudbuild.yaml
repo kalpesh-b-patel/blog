@@ -1,13 +1,10 @@
 steps:
   - name: gcr.io/cloud-builders/npm
     args: ['install']
-  - name: gcr.io/cloud-builders/npm
-    args: ['run', 'create-private-key']
-    env:
-      - 'jwtRS256.key=${_PRIVATE_KEY}'
-  - name: gcr.io/cloud-builders/npm
-    args: ['run', 'create-public-key']
-    env:
-      - 'jwtRS256.key.pub=${_PUBLIC_KEY}'
+# To copy environment variable from cloudbuild trigger
+#  - name: gcr.io/cloud-builders/npm
+#    args: ['run', 'create-private-key']
+#    env:
+#      - 'jwtRS256.key=${_PRIVATE_KEY}'
   - name: gcr.io/cloud-builders/gcloud
     args: ['app', 'deploy']

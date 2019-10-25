@@ -1,34 +1,18 @@
-const commentRouter = require('express').Router();
-const utils = require('../utils/utils');
-require('../config/passport');
-const passport = require('passport');
+const router = require('express').Router();
+const { isAuthenticated } = require('../middlewares/verifyJwt');
+const {
+  getComments,
+  createComment,
+  updateComment,
+  deleteComment
+} = require('../controllers/comment');
 
-commentRouter.get('/',
-  passport.authenticate('jwt', { session: false }, null),
-  (req, res) => {
-  // const token = req.headers.authorization.split(' ')[1];
-  // console.log(utils.verifyJwt(token));
-  res.status(200).json({
-    message: 'GET comments'
-  });
-});
+router.route('/')
+  .get(isAuthenticated, getComments)
+  .post(isAuthenticated, createComment);
 
-commentRouter.post('/', (_, res) => {
-  res.status(201).json({
-    message: 'POST comment'
-  });
-});
+router.route('/:id')
+  .put(isAuthenticated, updateComment)
+  .delete(isAuthenticated, deleteComment);
 
-commentRouter.put('/:id', (_, res) => {
-  res.status(200).json({
-    message: 'PUT comment'
-  });
-});
-
-commentRouter.delete('/:id', (_, res) => {
-  res.status(204).json({
-    message: 'DELETE comment'
-  });
-});
-
-module.exports = commentRouter;
+module.exports = router;
