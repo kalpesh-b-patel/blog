@@ -15,7 +15,7 @@ DROP SCHEMA IF EXISTS `blog` ;
 -- -----------------------------------------------------
 -- Schema blog
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `blog` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+CREATE SCHEMA IF NOT EXISTS `blog` DEFAULT CHARACTER SET utf8mb4;
 USE `blog` ;
 
 -- -----------------------------------------------------
@@ -30,9 +30,7 @@ CREATE TABLE IF NOT EXISTS `blog`.`categories` (
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -51,9 +49,9 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_comments_users1_idx` (`userId` ASC) VISIBLE,
-  INDEX `fk_comments_posts1_idx` (`postId` ASC) VISIBLE,
-  INDEX `fk_comments_enums1_idx` (`statusId` ASC) VISIBLE,
+  INDEX `fk_comments_users1_idx` (`userId` ASC),
+  INDEX `fk_comments_posts1_idx` (`postId` ASC),
+  INDEX `fk_comments_enums1_idx` (`statusId` ASC),
   CONSTRAINT `fk_comments_enums1`
     FOREIGN KEY (`statusId`)
     REFERENCES `blog`.`enums` (`id`),
@@ -68,8 +66,7 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
@@ -85,8 +82,7 @@ CREATE TABLE IF NOT EXISTS `blog`.`enums` (
   `updatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
@@ -106,9 +102,9 @@ CREATE TABLE IF NOT EXISTS `blog`.`posts` (
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `userId_idx` (`userId` ASC) VISIBLE,
-  INDEX `fk_posts_enums1_idx` (`statusId` ASC) VISIBLE,
-  INDEX `fk_posts_categories1_idx` (`categoryId` ASC) VISIBLE,
+  INDEX `userId_idx` (`userId` ASC),
+  INDEX `fk_posts_enums1_idx` (`statusId` ASC),
+  INDEX `fk_posts_categories1_idx` (`categoryId` ASC),
   CONSTRAINT `fk_posts_categories1`
     FOREIGN KEY (`categoryId`)
     REFERENCES `blog`.`categories` (`id`),
@@ -121,8 +117,7 @@ CREATE TABLE IF NOT EXISTS `blog`.`posts` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
@@ -143,14 +138,13 @@ CREATE TABLE IF NOT EXISTS `blog`.`users` (
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
-  INDEX `fk_users_enums1_idx` (`roleId` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
+  INDEX `fk_users_enums1_idx` (`roleId` ASC),
   CONSTRAINT `fk_users_enums1`
     FOREIGN KEY (`roleId`)
     REFERENCES `blog`.`enums` (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+DEFAULT CHARACTER SET = utf8mb4;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

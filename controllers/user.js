@@ -1,5 +1,3 @@
-const orm = require('../models/orm');
-
 exports.getUsers = (req, res) => {
   res
     .status(200)
@@ -24,12 +22,12 @@ exports.getUserByEmail = (req, res) => {
     });
 };
 
-exports.getUserByEmailAndPassword = (req, res) => {
+exports.getUserByEmailAndPassword = async (req, res) => {
   const user = req.body;
   res
     .status(200)
     .json({
-      message: 'Login success!'
+      message: 'Login Success!'
     });
 };
 
