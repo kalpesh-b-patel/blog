@@ -11,6 +11,7 @@ const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
 const likeRouter = require('./routes/like');
+const enumRouter = require('./routes/enum');
 
 app.use(cors());
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/likes', likeRouter);
+app.use('/api/enums', enumRouter);
 
 app.listen(PORT, () => {
   console.log(`App is running on port: ${ PORT }`);

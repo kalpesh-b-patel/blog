@@ -13,8 +13,8 @@ exports.createOne = (table, payloadArray) => {
   return pool.query(query, payloadArray);
 };
 
-exports.updateOne = (table, lookupArray, payloadArray) => {
-  const query = `UPDATE ${ table } SET ? WHERE `;
+exports.updateOne = (table, column, lookupArray, payloadArray) => {
+  const query = `UPDATE ${ table } SET ${ column } = ? WHERE `;
   return pool.query(
     generateQuery(query, lookupArray),
     payloadArray

@@ -5,6 +5,15 @@ let dbConfig = {};
 
 switch (process.env.ENVIRONMENT) {
   case 'development':
+    dbConfig = {
+      connectionLimit: 10,
+      host: process.env.HOST_LOCAL,
+      port: process.env.PORT_LOCAL,
+      database: process.env.DB_LOCAL,
+      user: process.env.USER_LOCAL,
+      password: process.env.PASSWORD_LOCAL
+    };
+    break;
   case 'test':
     const fs = require('fs');
     const privateKey = fs.readFileSync(__dirname + '/client-key.pem', "utf8");

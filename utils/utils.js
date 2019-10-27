@@ -3,10 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const signJwt = {
-  payload: {
-    id: ''
-  },
-  privateKey: process.env.PRIVATE_KEY, //fs.readFileSync(privateKey, 'utf8'),
+  payload: {},
+  privateKey: process.env.PRIVATE_KEY,
   signOptions: {
     issuer: process.env.ISSUER,
     audience: process.env.AUDIENCE,
@@ -16,8 +14,8 @@ const signJwt = {
 };
 
 exports.generateJwt = user => {
-  /* TODO: generate token using id and role as a payload */
-  signJwt.payload.id = 1;
+  signJwt.payload.id = user.id;
+  signJwt.payload.isAdmin = user.isAdmin;
   return jwt.sign(signJwt.payload, signJwt.privateKey, signJwt.signOptions);
 };
 
@@ -28,4 +26,15 @@ exports.decodeJwt = token => {
 exports.generateHash = (plainPassword) => {
   const salt = bcrypt.genSaltSync(10);
   return bcrypt.hashSync(plainPassword, salt);
+};
+
+exports.response = (data, error) => {
+  return {
+    data,
+    error
+  }
+};
+
+exports.generateUniqueId = () => {
+  return Math.floor(Math.random() * 900000000 + 100000000);
 };
