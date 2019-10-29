@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 exports.mailer = async (email, id) => {
-  const testAccount = await nodemailer.createTestAccount();
+  await nodemailer.createTestAccount();
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
@@ -22,7 +22,6 @@ exports.mailer = async (email, id) => {
       html: `<a target="_blank" href="localhost:3000/api/auth/verify?id=${ id }&email=${ email }">Click here to verify</a>`
     });
   } catch (err) {
-    console.log('Could not send an email!');
     throw new Error(err);
   }
 };

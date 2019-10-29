@@ -1,27 +1,20 @@
 const postRouter = require('express').Router();
+const { isAuthenticated } = require('../middlewares/verifyJwt');
+const {
+  getPosts,
+  getPostById,
+  createPost,
+  updatePost,
+  deletePost
+} = require('../controllers/post');
 
-postRouter.get('/', (_, res) => {
-  res.status(200).json({
-    message: 'GET posts'
-  });
-});
+postRouter.route('/')
+  .get(isAuthenticated, getPosts)
+  .post(isAuthenticated, createPost);
 
-postRouter.post('/', (_, res) => {
-  res.status(201).json({
-    message: 'POST posts'
-  });
-});
-
-postRouter.put('/:id', (_, res) => {
-  res.status(200).json({
-    message: 'PUT post'
-  });
-});
-
-postRouter.delete('/:id', (_, res) => {
-  res.status(204).json({
-    message: 'PUT post'
-  });
-});
+postRouter.route('/:id')
+  .get(isAuthenticated, getPostById)
+  .put(isAuthenticated, updatePost)
+  .delete(isAuthenticated, deletePost);
 
 module.exports = postRouter;

@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const {
   response,
   generateUniqueId,
@@ -32,17 +33,42 @@ exports.getUserByEmail = (req, res) => {
 
 exports.getUserByEmailAndPassword = async (req, res) => {
   const user = req.body;
-  res
-    .status(200)
-    .json({
-      message: 'Login Success!'
-    });
+
+  const exists = await orm.findOne(
+    'users',
+    ['*'],
+    ['email'],
+    [user.email]
+  );
+
+  if (!exists.length) {
+    return res.status(400).json(response(null, 'Invalid credentials!'));
+  }
+
+  const matched = bcrypt.compareSync(user.password, exists[0].password);
+
+  if (!matched) {
+    return res.status(400).json(response(null, 'Invalid credentials!'));
+  }
+
+  const token = generateJwt({
+    id: exists[0].id,
+    isAdmin: exists[0].isAdmin
+  });
+
+  res.status(200).json(response(
+    {
+      token,
+      email: exists[0].email,
+      displayName: exists[0].firstname + ' ' + exists[0].lastname
+    }, '')
+  );
 };
 
 exports.createUser = async (req, res) => {
   const newUser = req.body;
   try {
-    const exists = await orm.find('users', ['email'], ['email'], [newUser.email]);
+    const exists = await orm.findOne('users', ['email'], ['email'], [newUser.email]);
 
     if (exists.length) {
       return res.status(400).json(response(null, 'This email is already registered with us!'));
@@ -59,9 +85,14 @@ exports.createUser = async (req, res) => {
       isAdmin: false
     });
 
-    await mailer(newUser.email, newUser.id);
+    mailer(newUser.email, newUser.id).then(() => {});
 
-    res.status(201).json(response(token, ''));
+    res.status(201).json(response({
+      token,
+      email: newUser.email,
+      displayName: newUser.firstname + ' ' + newUser.lastname
+    }, ''));
+
   } catch(err) {
     res.status(400).json(response(null, err));
   }
@@ -89,14 +120,17 @@ exports.verifyEmail = async (req, res) => {
   const currentTime = Math.floor(Date.now() / 1000);
 
   try {
-    const user = await orm.find(
+    const user = await orm.findOne(
       'users',
-      ['createdAt'],
+      ['createdAt', 'verified'],
       ['id', 'email'],
       [id, email]);
 
-    const diff = currentTime - user[0].createdAt;
+    if (user[0].verified) {
+      return res.status(200).json(response(null, 'This account has already been verified!'));
+    }
 
+    const diff = currentTime - user[0].createdAt;
     if (diff > 86400) {
       res.status(200).json(response(null, 'Verification link has been expired!'));
     }
@@ -110,6 +144,6 @@ exports.verifyEmail = async (req, res) => {
 
     res.status(200).json(response(`You've successfully verified the email!`, ''));
   } catch(err) {
-    res.status(200).json(response(null, 'Something went wrong! Please try again.'));
+    res.status(200).json(response(null, 'Invalid verification link! Please contact support team!'));
   }
 };

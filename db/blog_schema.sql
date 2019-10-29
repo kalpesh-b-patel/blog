@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `blog`.`categories` (
   `id` INT(11) NOT NULL,
   `category` VARCHAR(45) NOT NULL,
   `parentId` INT(11) NOT NULL DEFAULT '0',
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` INT(11) NOT NULL,
+  `updatedAt` INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -46,15 +46,11 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
   `parentId` INT(11) NOT NULL DEFAULT '0',
   `comment` VARCHAR(1000) NOT NULL,
   `likeCount` INT(11) NOT NULL,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` INT(11) NOT NULL,
+  `updatedAt` INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_comments_users1_idx` (`userId` ASC),
   INDEX `fk_comments_posts1_idx` (`postId` ASC),
-  INDEX `fk_comments_enums1_idx` (`statusId` ASC),
-  CONSTRAINT `fk_comments_enums1`
-    FOREIGN KEY (`statusId`)
-    REFERENCES `blog`.`enums` (`id`),
   CONSTRAINT `fk_comments_posts1`
     FOREIGN KEY (`postId`)
     REFERENCES `blog`.`posts` (`id`)
@@ -67,23 +63,6 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
-
-
--- -----------------------------------------------------
--- Table `blog`.`enums`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `blog`.`enums` ;
-
-CREATE TABLE IF NOT EXISTS `blog`.`enums` (
-  `id` INT(11) NOT NULL,
-  `enum` VARCHAR(45) NOT NULL,
-  `value` VARCHAR(45) NOT NULL,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
-
 
 -- -----------------------------------------------------
 -- Table `blog`.`posts`
@@ -99,18 +78,17 @@ CREATE TABLE IF NOT EXISTS `blog`.`posts` (
   `post` TEXT NOT NULL,
   `readCount` INT(11) NOT NULL,
   `likeCount` INT(11) NOT NULL,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` INT(11) NOT NULL,
+  `updatedAt` INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `userId_idx` (`userId` ASC),
-  INDEX `fk_posts_enums1_idx` (`statusId` ASC),
   INDEX `fk_posts_categories1_idx` (`categoryId` ASC),
   CONSTRAINT `fk_posts_categories1`
     FOREIGN KEY (`categoryId`)
     REFERENCES `blog`.`categories` (`id`),
-  CONSTRAINT `fk_posts_enums1`
+  CONSTRAINT `fk_posts_status1`
     FOREIGN KEY (`statusId`)
-    REFERENCES `blog`.`enums` (`id`),
+    REFERENCES `blog`.`status` (`id`),
   CONSTRAINT `userId`
     FOREIGN KEY (`userId`)
     REFERENCES `blog`.`users` (`id`)
@@ -127,22 +105,32 @@ DROP TABLE IF EXISTS `blog`.`users` ;
 
 CREATE TABLE IF NOT EXISTS `blog`.`users` (
   `id` INT(11) NOT NULL,
-  `roleId` INT(11) NOT NULL,
   `firstname` VARCHAR(45) NOT NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   `password` CHAR(60) NOT NULL,
-  `avatar` VARCHAR(45) NOT NULL,
+  `avatar` VARCHAR(45) NOT NULL DEFAULT 'default.png',
   `verified` TINYINT(4) NOT NULL DEFAULT '0',
+  `isAdmin` TINYINT(4) NOT NULL DEFAULT '0',
   `subscribed` TINYINT(4) NOT NULL DEFAULT '0',
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` INT(11) NOT NULL,
+  `updatedAt` INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
-  INDEX `fk_users_enums1_idx` (`roleId` ASC),
-  CONSTRAINT `fk_users_enums1`
-    FOREIGN KEY (`roleId`)
-    REFERENCES `blog`.`enums` (`id`))
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+-- -----------------------------------------------------
+-- Table `blog`.`users`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `blog`.`status` ;
+
+CREATE TABLE IF NOT EXISTS `blog`.`status` (
+  `id` INT(11) NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
+  `createdAt` INT(11) NOT NULL,
+  `updatedAt` INT(11) DEFAULT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 

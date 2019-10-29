@@ -1,6 +1,11 @@
 const pool = require('../config/db');
 
-exports.find = (table, columnArray, lookupArray, payloadArray, orderBy, limit) => {
+exports.findAll = (table, orderBy, startAt, limit) => {
+  const query = `SELECT * FROM ${ table } ORDER BY ${ orderBy } LIMIT ${ startAt }, ${ limit }`;
+  return pool.query(query);
+};
+
+exports.findOne = (table, columnArray, lookupArray, payloadArray, orderBy, limit) => {
   const query = `SELECT ${ columnArray.join(' ') } FROM ${ table } WHERE `;
   return pool.query(
     generateQuery(query, lookupArray, orderBy, limit),
@@ -44,7 +49,7 @@ const generateQuery = (query, lookupArray, orderBy = null, limit = null) => {
   if (limit) {
     query += ` LIMIT ${ limit }`
   }
-  console.log(query);
+
   return query;
 };
 

@@ -1,5 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const pool = require('../config/db');
+const { response } = require('../utils/utils');
 
 const getAuthToken = (req, res, next) => {
   if (
@@ -18,14 +20,17 @@ exports.isAuthenticated = (req, res, next) => {
       const { authToken } = req;
       const publicKey = process.env.PUBLIC_KEY;
       const user = jwt.verify(authToken, publicKey);
-      console.log(user);
-      return next();
+
+      const query = 'SELECT id FROM users WHERE id = ?';
+      const found = await pool.query(query, [user.id]);
+
+      if (found.length) {
+        return next();
+      } else {
+        res.status(401).json(response(null, 'You are not authorised to make this request!'));
+      }
     } catch(err) {
-      res.status(401).json({
-        data: [],
-        error: 'You are not authorised to make this request!',
-        vErrors: []
-      });
+      res.status(401).json(response(null, 'You are not authorised to make this request!'));
     }
   });
 };
